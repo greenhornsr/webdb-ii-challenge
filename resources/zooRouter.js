@@ -15,7 +15,7 @@ const db = knex(knexConfig)
 router.use(express.json());
 
 router.get('/', (req, res) => {
-    return db('zoos')
+    db('zoos')
     .then(zoos => {
         zoos ? res.status(200).json(zoos): 
         res.status(404).json({message: 'sorry, no zoos found'})
@@ -24,17 +24,58 @@ router.get('/', (req, res) => {
         res.status(500).json({message: 'internal server error', err})
     })
 })
-router.get('/:id', (req, res) => {
-    return null
-})
+
 router.post('/', (req, res) => {
-    return null
+    const newzoo = req.body
+    db('zoos')
+    .insert(req.body, 'id')
+    .then(ids => {
+        res.status(201).json({message: `${ids} added successfully`, ids, newzoo})
+    })
+    .catch(err => {
+        res.status(500).json({message: `internal server error`, err})
+    })
 })
+
+router.get('/:id', (req, res) => {
+    db('zoos').where({ id: req.params.id }) 
+    .first()
+    .then(zoo => {
+        zoo ? res.status(200).json(zoo): 
+        res.status(404).json({message: 'sorry, no zoos found'})
+    })
+    .catch(err => {
+        res.status(500).json({message: 'internal server error', err})
+    })
+})
+
 router.put('/:id', (req, res) => {
-    return null
+    const {id} = req.params
+    const changes = req.body
+    db('zoos').where({ id: req.params.id }).update(changes) 
+    .then(count => {
+        count ? res.status(200).json({message: `${count} records updated`, changes}): 
+        res.status(404).json({message: `sorry, no zoo with given id: ${id} found`})
+    })
+    .catch(err => {
+        res.status(500).json({message: 'internal server error', err})
+    })
 })
+
 router.delete('/:id', (req, res) => {
-    return null
+    const zoo = req.body
+    db('zoos').where({ id: req.params.id }).delete() 
+    .then(count => {
+        if(count){
+            const zoounit = count > 1 ? 'records': 'record';
+            res.status(200).json({message: `${count} ${zoounit} deleted`, zoodeleted: zoo})
+        }else{
+            res.status(404).json({message: 'Zoo not found'})
+        }
+    })
+    .catch(err => {
+        res.status(500).json({message: 'internal server error', err})
+    })
 })
 
 
