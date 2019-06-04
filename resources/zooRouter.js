@@ -17,11 +17,11 @@ router.use(express.json());
 router.get('/', (req, res) => {
     db('zoos')
     .then(zoos => {
-        zoos ? res.status(200).json(zoos): 
+        zoos ? res.status(200).json({Zoos: zoos}): 
         res.status(404).json({message: 'sorry, no zoos found'})
     })
     .catch(err => {
-        res.status(500).json({message: 'internal server error', err})
+        res.status(500).json({message: 'internal server error', error:  err})
     })
 })
 
@@ -30,10 +30,10 @@ router.post('/', (req, res) => {
     db('zoos')
     .insert(req.body, 'id')
     .then(ids => {
-        res.status(201).json({message: `${ids} added successfully`, ids, newzoo})
+        res.status(201).json({message: `${ids} added successfully`, id: ids, newZooAdded: newzoo})
     })
     .catch(err => {
-        res.status(500).json({message: `internal server error`, err})
+        res.status(500).json({message: `internal server error`, error:  err})
     })
 })
 
@@ -45,7 +45,7 @@ router.get('/:id', (req, res) => {
         res.status(404).json({message: 'sorry, no zoos found'})
     })
     .catch(err => {
-        res.status(500).json({message: 'internal server error', err})
+        res.status(500).json({message: 'internal server error', error:  err})
     })
 })
 
@@ -58,7 +58,7 @@ router.put('/:id', (req, res) => {
         res.status(404).json({message: `sorry, no zoo with given id: ${id} found`})
     })
     .catch(err => {
-        res.status(500).json({message: 'internal server error', err})
+        res.status(500).json({message: 'internal server error', error:  err})
     })
 })
 
@@ -74,7 +74,7 @@ router.delete('/:id', (req, res) => {
         }
     })
     .catch(err => {
-        res.status(500).json({message: 'internal server error', err})
+        res.status(500).json({message: 'internal server error', error:  err})
     })
 })
 
