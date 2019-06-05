@@ -36,6 +36,8 @@ function update(id, changes) {
     .where({id})
     .update(changes, '*')
 }
-function remove() {
-    return null
+function remove(id) {
+    return db('zoos')
+    .where({ id })
+    .delete()
 }

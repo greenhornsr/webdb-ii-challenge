@@ -68,8 +68,9 @@ router.put('/:id', (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
+    const {id} = req.params
     const zoo = req.body
-    db('zoos').where({ id: req.params.id }).delete() 
+    Zoosdb.remove(id)
     .then(count => {
         if(count){
             const zoounit = count > 1 ? 'records': 'record';
